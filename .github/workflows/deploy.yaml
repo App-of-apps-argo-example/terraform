@@ -1,7 +1,5 @@
 name: Deploy EKS and ArgoCD
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
