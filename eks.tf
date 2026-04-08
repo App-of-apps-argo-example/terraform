@@ -3,7 +3,7 @@ module "eks" {
   version = "20.5.0"
 
   cluster_name    = "argo-cluster"
-  cluster_version = "1.29"
+  cluster_version = "1.35"
 
   cluster_endpoint_public_access = true
 
