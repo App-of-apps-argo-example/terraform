@@ -14,13 +14,29 @@ resource "helm_release" "argocd" {
   depends_on = [module.eks]
 }
 
-resource "null_resource" "argocd_root_app" {
+resource "null_resource" "argocd_root_apps" {
   depends_on = [helm_release.argocd]
 
   provisioner "local-exec" {
     command = <<EOT
-      aws eks update-kubeconfig --name ${module.eks.cluster_name} --region eu-central-1
-      kubectl apply -f https://raw.githubusercontent.com/App-of-apps-argo-example/gitops-core/main/applications/init/root-app.yaml
+      aws eks update-kubeconfig --name ${module.eks.cluster_name} --region eu-west-1
+      
+      MAX_RETRIES=10
+      RETRY_COUNT=0
+      
+      until kubectl get namespace argocd > /dev/null 2>&1; do
+        if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+          echo "Timeout waiting for argocd namespace"
+          exit 1
+        fi
+        echo "Waiting for argocd namespace..."
+        sleep 10
+        RETRY_COUNT=$((RETRY_COUNT+1))
+      done
+      
+      kubectl apply -f https://raw.githubusercontent.com/App-of-apps-argo-example/gitops-core/main/applications/init/test.yaml
+      kubectl apply -f https://raw.githubusercontent.com/App-of-apps-argo-example/gitops-core/main/applications/init/stage.yaml
+      kubectl apply -f https://raw.githubusercontent.com/App-of-apps-argo-example/gitops-core/main/applications/init/prod.yaml
     EOT
   }
 }
