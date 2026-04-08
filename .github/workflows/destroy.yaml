@@ -17,13 +17,13 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::092568126647:role/GitHubActionsDeployRole
-          aws-region: eu-central-1
+          aws-region: eu-west-1
           
       - name: Bootstrap Terraform Backend
         env:
-          TF_STATE_BUCKET: "app-of-apps-tf-state-1"
-          TF_STATE_TABLE: "app-of-apps-tf-lock"
-          AWS_REGION: "eu-central-1"
+          TF_STATE_BUCKET: "app-of-apps-tf-state-eu-west-1"
+          TF_STATE_TABLE: "app-of-apps-tf-lock-euw1"
+          AWS_REGION: "eu-west-1"
         run: |
           BUCKET_NAME=$(echo "$TF_STATE_BUCKET" | tr '[:upper:]' '[:lower:]')
           
