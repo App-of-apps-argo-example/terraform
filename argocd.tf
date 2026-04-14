@@ -15,7 +15,7 @@ resource "helm_release" "argocd" {
 }
 
 resource "null_resource" "argocd_root_apps" {
-  depends_on = [helm_release.argocd]
+  depends_on = [helm_release.argocd, helm_release.eso]
 
   provisioner "local-exec" {
     command = <<EOT
