@@ -37,6 +37,23 @@ resource "null_resource" "argocd_root_apps" {
       kubectl apply -f https://raw.githubusercontent.com/App-of-apps-argo-example/gitops-core/main/applications/init/test.yaml
       kubectl apply -f https://raw.githubusercontent.com/App-of-apps-argo-example/gitops-core/main/applications/init/stage.yaml
       kubectl apply -f https://raw.githubusercontent.com/App-of-apps-argo-example/gitops-core/main/applications/init/prod.yaml
+      
+      cat <<CSS | kubectl apply -f -
+      apiVersion: external-secrets.io/v1beta1
+      kind: ClusterSecretStore
+      metadata:
+        name: aws-secretsmanager
+      spec:
+        provider:
+          aws:
+            service: SecretsManager
+            region: eu-west-1
+            auth:
+              jwt:
+                serviceAccountRef:
+                  name: external-secrets
+                  namespace: external-secrets
+      CSS
     EOT
   }
 }
